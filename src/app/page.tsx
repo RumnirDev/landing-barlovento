@@ -48,6 +48,7 @@ function BarloventoBackground() {
         return () => clearInterval(interval);
     }, [waveDirection]);
 
+
     return (
         <div className="absolute w-full h-screen overflow-hidden bg-blue-50 z-0">
             {/* Cielo y sol */}
@@ -208,13 +209,31 @@ const EcommerceLanding: React.FC = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+    
+    const  handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // Aquí iría la lógica para procesar el email
-        alert(`Gracias por tu interés. Te hemos enviado un correo a: ${email}`);
+        try {
+            const response = await fetch('/api/mail', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                console.log('Correo enviado con éxito');
+            } else {
+                console.error('Error:', data.error);
+            }
+        } catch (error) {
+            console.error('Error en la petición:', error);
+        }
+        
         setEmail('');
-    };
-
+    }
     return (
         <div className="relative w-full overflow-hidden bg-[#a3ccfd]">
             <BarloventoBackground />
@@ -236,7 +255,7 @@ const EcommerceLanding: React.FC = () => {
 
                     {/* Email signup form */}
                     <div className="w-1/2 mx-auto mb-16">
-                        <div className="flex max-w-xl overflow-hidden rounded-2xl shadow-md mx-auto">
+                        <form className="flex max-w-xl overflow-hidden rounded-2xl shadow-md mx-auto" onSubmit={handleSubmit}>
                             <input
                                 type="email"
                                 placeholder="Dirección de correo electrónico"
@@ -251,7 +270,7 @@ const EcommerceLanding: React.FC = () => {
                             >
                                 Comenzar prueba gratis
                             </button>
-                        </div>
+                        </form>
 
                         <p className="mt-2 text-sm w-full text-gray-500">
                             Empieza a vender en Barlovento, gratis por 14 días sin necesidad de pago.
