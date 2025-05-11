@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react';
 import { ShoppingCart, Shield, Layout, ArrowRight } from 'lucide-react';
 import ImagesCarrousel from '@/components/imagesCarrousel';
 import "./globals.css";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 interface FeatureCardProps {
     icon: React.ElementType;
@@ -15,7 +18,6 @@ type TestimonialProps = {
     quote: string;
 }
 
-// Componente de tarjeta de característica
 const FeatureCard: React.FC<FeatureCardProps> = ({ icon: Icon, title, description }) => {
     return (
         <div className="flex flex-col items-center p-6 bg-white rounded-lg shadow-lg z-10">
@@ -51,6 +53,10 @@ function BarloventoBackground() {
 
     return (
         <div className="absolute w-full h-screen overflow-hidden bg-blue-50 z-0">
+            <ToastContainer
+            position="top-right"
+            autoClose={7000}
+            />
             {/* Cielo y sol */}
             <div className="absolute inset-0 bg-gradient-to-b from-blue-100 to-blue-200">
                 <div className="absolute top-24 left-24 w-16 h-16 rounded-full bg-yellow-200 opacity-80 blur-md"></div>
@@ -224,12 +230,12 @@ const EcommerceLanding: React.FC = () => {
             const data = await response.json();
             
             if (response.ok) {
-                console.log('Correo enviado con éxito');
+                toast.success('Correo enviado con éxito, revisa tu bandeja de entrada o spam.');
             } else {
-                console.error('Error:', data.error);
+                toast.error('Ha ocurrido un error al enviar el correo, por favor intenta de nuevo más tarde.');
             }
         } catch (error) {
-            console.error('Error en la petición:', error);
+            toast.error('Ha ocurrido un error al enviar el correo, por favor intenta de nuevo más tarde.');
         }
         
         setEmail('');
