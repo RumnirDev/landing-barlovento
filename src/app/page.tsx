@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react';
 import { ShoppingCart, Shield, Layout, ArrowRight } from 'lucide-react';
 import ImagesCarrousel from '@/components/imagesCarrousel';
 import "./globals.css";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 interface FeatureCardProps {
     icon: React.ElementType;
@@ -15,7 +18,6 @@ type TestimonialProps = {
     quote: string;
 }
 
-// Componente de tarjeta de característica
 const FeatureCard: React.FC<FeatureCardProps> = ({ icon: Icon, title, description }) => {
     return (
         <div className="flex flex-col items-center p-6 bg-white rounded-lg shadow-lg z-10">
@@ -48,8 +50,13 @@ function BarloventoBackground() {
         return () => clearInterval(interval);
     }, [waveDirection]);
 
+
     return (
         <div className="absolute w-full h-screen overflow-hidden bg-blue-50 z-0">
+            <ToastContainer
+            position="top-right"
+            autoClose={7000}
+            />
             {/* Cielo y sol */}
             <div className="absolute inset-0 bg-gradient-to-b from-blue-100 to-blue-200">
                 <div className="absolute top-24 left-24 w-16 h-16 rounded-full bg-yellow-200 opacity-80 blur-md"></div>
@@ -208,13 +215,31 @@ const EcommerceLanding: React.FC = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+    
+    const  handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // Aquí iría la lógica para procesar el email
-        alert(`Gracias por tu interés. Te hemos enviado un correo a: ${email}`);
+        try {
+            const response = await fetch('/api/mail', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                toast.success('Correo enviado con éxito, revisa tu bandeja de entrada o spam.');
+            } else {
+                toast.error('Ha ocurrido un error al enviar el correo, por favor intenta de nuevo más tarde.');
+            }
+        } catch (error) {
+            toast.error('Ha ocurrido un error al enviar el correo, por favor intenta de nuevo más tarde.');
+        }
+        
         setEmail('');
-    };
-
+    }
     return (
         <div className="relative w-full overflow-hidden bg-[#a3ccfd]">
             <BarloventoBackground />
@@ -236,7 +261,7 @@ const EcommerceLanding: React.FC = () => {
 
                     {/* Email signup form */}
                     <div className="w-1/2 mx-auto mb-16">
-                        <div className="flex max-w-xl overflow-hidden rounded-2xl shadow-md mx-auto">
+                        <form className="flex max-w-xl overflow-hidden rounded-2xl shadow-md mx-auto" onSubmit={handleSubmit}>
                             <input
                                 type="email"
                                 placeholder="Dirección de correo electrónico"
@@ -251,7 +276,7 @@ const EcommerceLanding: React.FC = () => {
                             >
                                 Comenzar prueba gratis
                             </button>
-                        </div>
+                        </form>
 
                         <p className="mt-2 text-sm w-full text-gray-500">
                             Empieza a vender en Barlovento, gratis por 14 días sin necesidad de pago.
