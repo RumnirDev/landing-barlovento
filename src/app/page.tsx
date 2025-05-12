@@ -154,7 +154,7 @@ function BarloventoBackground() {
 const Testimonial = ({ company, quote }: TestimonialProps) => {
     return (
       <div className="bg-white p-6 rounded-xl shadow-lg max-w-md text-center h-max">
-        <p className="text-md italic text-gray-700 mb-4">"{quote}"</p>
+        <p className="text-md italic text-gray-700 mb-4">{quote}</p>
         <h3 className="text-md text-center font-semibold text-gray-900">{company}</h3>
       </div>
     );
@@ -204,17 +204,6 @@ const TestimonialCarousel = () => {
 // Componente principal
 const EcommerceLanding: React.FC = () => {
     const [email, setEmail] = useState<string>('');
-    const [isScrolled, setIsScrolled] = useState<boolean>(false);
-
-    useEffect(() => {
-        const handleScroll = (): void => {
-            setIsScrolled(window.scrollY > 50);
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
     
     const  handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -227,14 +216,13 @@ const EcommerceLanding: React.FC = () => {
                 body: JSON.stringify({ email }),
             });
             
-            const data = await response.json();
-            
             if (response.ok) {
                 toast.success('Correo enviado con éxito, revisa tu bandeja de entrada o spam.');
             } else {
                 toast.error('Ha ocurrido un error al enviar el correo, por favor intenta de nuevo más tarde.');
             }
         } catch (error) {
+            console.log('Error al enviar el correo:', error);
             toast.error('Ha ocurrido un error al enviar el correo, por favor intenta de nuevo más tarde.');
         }
         

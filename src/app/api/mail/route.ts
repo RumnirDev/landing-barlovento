@@ -2,10 +2,10 @@
 import nodemailer from 'nodemailer';
 import path from 'path';
 import fs from 'fs/promises'; // Usar la versión asíncrona
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import validator from 'validator'; // Librería para validar emails
 
-export async function POST(request) {
+export async function POST(request: NextRequest) {
     try {
         const { email } = await request.json();
 
@@ -49,8 +49,10 @@ export async function POST(request) {
         console.error('Error al enviar el correo:', error);
 
         let errorMessage = 'Error desconocido';
-        if (error.code) {
-            errorMessage = `Código de error: ${error.code}`;
+        if (error instanceof Error && 'code' in error) {
+            if (typeof (error as { code?: unknown }).code === 'string') {
+                errorMessage = `Código de error: ${(error as { code: string }).code}`;
+            }
         }
 
         return NextResponse.json({ error: errorMessage }, { status: 500 });

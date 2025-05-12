@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import ImageFrame from './image';
 
 type Props = {
     images: string[];
